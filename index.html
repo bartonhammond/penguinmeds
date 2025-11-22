@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00CED1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Penguin Meds">
+    <title>Penguin Meds</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐧 Penguin Meds</h1>
+            <p>Medicine Tracker</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="0">Marijuana</button>
+            <button class="tab" data-tab="1">Nicotine</button>
+            <button class="tab" data-tab="2">MJ Chart</button>
+            <button class="tab" data-tab="3">Nic Chart</button>
+            <button class="tab" data-tab="4">About</button>
+        </div>
+
+        <!-- Marijuana Entry Tab -->
+        <div class="tab-content active">
+            <div class="daily-total">
+                <h3>Today's Total</h3>
+                <div class="amount" id="mj-total">0</div>
+                <div class="unit">mg</div>
+            </div>
+
+            <div id="mj-edit-indicator" style="display: none;" class="edit-mode-indicator">
+                Editing Entry - Click Update or Cancel
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select id="mj-type" required>
+                    <option value="flower">Flower</option>
+                    <option value="tincture">Tincture</option>
+                    <option value="day gummy">Day Gummy</option>
+                    <option value="night gummy">Night Gummy</option>
+                    <option value="oil">Oil</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Amount (mg)</label>
+                <select id="mj-amount" required>
+                    <option value="5">5 mg</option>
+                    <option value="10">10 mg</option>
+                    <option value="15">15 mg</option>
+                    <option value="20">20 mg</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Time</label>
+                <input type="time" id="mj-time" required>
+            </div>
+
+            <button type="button" class="btn" id="mj-submit-btn">Add Entry</button>
+            <button type="button" class="btn btn-secondary" id="mj-cancel-btn" style="display: none;">Cancel</button>
+
+            <div class="recent-entries" id="mj-recent"></div>
+        </div>
+
+        <!-- Nicotine Entry Tab -->
+        <div class="tab-content">
+            <div class="daily-total">
+                <h3>Today's Total</h3>
+                <div class="amount" id="nic-total">0</div>
+                <div class="unit">mg</div>
+            </div>
+
+            <div id="nic-edit-indicator" style="display: none;" class="edit-mode-indicator">
+                Editing Entry - Click Update or Cancel
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select id="nic-type" required>
+                    <option value="gum">Gum</option>
+                    <option value="lozenge">Lozenge</option>
+                    <option value="snuff">Snuff</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Amount (mg)</label>
+                <select id="nic-amount" required>
+                    <option value="2">2 mg</option>
+                    <option value="3">3 mg</option>
+                    <option value="4">4 mg</option>
+                    <option value="5">5 mg</option>
+                    <option value="6">6 mg</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Time</label>
+                <input type="time" id="nic-time" required>
+            </div>
+
+            <button type="button" class="btn" id="nic-submit-btn">Add Entry</button>
+            <button type="button" class="btn btn-secondary" id="nic-cancel-btn" style="display: none;">Cancel</button>
+
+            <div class="recent-entries" id="nic-recent"></div>
+        </div>
+
+        <!-- Marijuana Chart Tab -->
+        <div class="tab-content">
+            <div class="chart-container">
+                <div class="chart-title">Marijuana - Last 7 Days</div>
+                <canvas id="mj-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Nicotine Chart Tab -->
+        <div class="tab-content">
+            <div class="chart-container">
+                <div class="chart-title">Nicotine - Last 7 Days</div>
+                <canvas id="nic-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div class="tab-content">
+            <div class="about-content">
+                <h3>🐧 About Penguin Meds</h3>
+                <p>Penguin Meds is a progressive web app designed to help you track your marijuana and nicotine medicines in a simple, private, and secure way.</p>
+
+                <div class="highlight">
+                    <strong>🔒 Your Privacy Matters</strong><br>
+                    All data is stored locally on your device only. No internet connection required. No accounts, no login, no tracking.
+                </div>
+
+                <h3>✨ Features</h3>
+                <ul>
+                    <li><strong>Easy Entry:</strong> Quickly log marijuana and nicotine usage with type, amount, and time</li>
+                    <li><strong>Daily Totals:</strong> See your current day's total at a glance</li>
+                    <li><strong>7-Day History:</strong> View line charts showing your usage patterns over the past week</li>
+                    <li><strong>Edit & Delete:</strong> Click any entry to edit it, or delete entries you no longer need</li>
+                    <li><strong>Auto-Cleanup:</strong> Data older than 7 days is automatically removed</li>
+                    <li><strong>Works Offline:</strong> No internet connection needed after installation</li>
+                </ul>
+
+                <h3>📱 How to Install on iPhone/iPad</h3>
+                <ul>
+                    <li>Open this page in Safari browser</li>
+                    <li>Tap the Share button (square with arrow pointing up)</li>
+                    <li>Scroll down and tap "Add to Home Screen"</li>
+                    <li>Tap "Add" in the top right corner</li>
+                    <li>The app icon will appear on your home screen!</li>
+                </ul>
+
+                <h3>💻 How to Install on Android</h3>
+                <ul>
+                    <li>Open this page in Chrome browser</li>
+                    <li>Tap the menu (three dots) in the top right</li>
+                    <li>Tap "Add to Home screen" or "Install app"</li>
+                    <li>Tap "Add" or "Install"</li>
+                    <li>The app will be added to your home screen!</li>
+                </ul>
+
+                <h3>🎯 Tracking Details</h3>
+                <p><strong>Marijuana Types:</strong> Flower, Tincture, Day Gummy, Night Gummy, Oil</p>
+                <p><strong>Marijuana Amounts:</strong> 5, 10, 15, 20 mg</p>
+                <p><strong>Nicotine Types:</strong> Gum, Lozenge, Snuff</p>
+                <p><strong>Nicotine Amounts:</strong> 2, 3, 4, 5, 6 mg</p>
+
+                <h3>💡 Tips</h3>
+                <ul>
+                    <li>The time field automatically sets to the current time</li>
+                    <li>Click any entry in the list to edit it</li>
+                    <li>Check the charts regularly to monitor your usage patterns</li>
+                    <li>Install the app to your home screen for quick access</li>
+                </ul>
+
+                <p style="text-align: center; margin-top: 30px; color: #00838F;">
+                    <strong>Made with care for your health and privacy 🐧</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
