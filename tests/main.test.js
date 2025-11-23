@@ -21,12 +21,9 @@ describe('Penquin Meds', () => {
     it(`should have 5 tabs`, async() => {
 	const numButtons  = await page.$$eval('.tabs button', (buttons) => {
 	    return buttons.length
-	    /*
-	    let str = buttons.map(button  => button.textContent)
-	    return str
-	    */
 	})
 	expect(numButtons).toBe(5); 
     })
 
+    
 })
