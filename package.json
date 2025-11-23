@@ -4,7 +4,8 @@
   "description": "Track marijuana and nicotine daily usage",
   "main": "app.js",
   "scripts": {
-      "tests": "jest"
+      "tests": "jest --runInBand tests/main.test.js",
+      "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "author": "Barton Hammond",
   "license": "ISC",
