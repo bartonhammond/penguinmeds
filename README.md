@@ -2,7 +2,8 @@
 Penguin Meds is a progressive web app designed to help you track your marijuana and nicotine medicines in a simple, private, and secure way.
 
 > 🔒 Your Privacy Matters
-All data is stored locally on your device only. No internet connection required. No accounts, no login, no tracking.
+>
+> All data is stored locally on your device only. No internet connection required. No accounts, no login, no tracking.
 
 ## ✨ Features
 * Easy Entry: Quickly log marijuana and nicotine usage with type, amount, and time
