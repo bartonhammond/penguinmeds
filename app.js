@@ -244,7 +244,7 @@ function drawChart(medicine) {
     const chartWidth = canvas.width - padding * 2;
     const chartHeight = canvas.height - padding * 2;
     const maxValue = Math.max(...data, 10);
-    const stepX = chartWidth / (days.length - 1);
+    const stepX = chartWidth / (days.length);
     
     // Draw axes
     ctx.strokeStyle = '#ddd';
@@ -304,9 +304,10 @@ function drawChart(medicine) {
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
     days.forEach((day, i) => {
-        const x = padding + stepX * i;
-        const label = new Date(day).toLocaleDateString('en-US', { day: 'numeric' });
-        ctx.fillText(label, x, canvas.height - padding + 20);
+	yearMonthDay = day.split('-')
+	const x = padding + stepX * i;
+	const label = new Date(yearMonthDay[0], yearMonthDay[1], yearMonthDay[2]).toLocaleDateString('en-US', { day: 'numeric' });
+	ctx.fillText(label, x, canvas.height - padding + 20);
     });
 }
 
