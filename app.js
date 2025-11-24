@@ -244,7 +244,7 @@ function drawChart(medicine) {
     const chartWidth = canvas.width - padding * 2;
     const chartHeight = canvas.height - padding * 2;
     const maxValue = Math.max(...data, 10);
-    const stepX = chartWidth / (days.length);
+    const stepX = chartWidth / (days.length -1 );
     
     // Draw axes
     ctx.strokeStyle = '#ddd';
