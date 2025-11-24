@@ -305,7 +305,7 @@ function drawChart(medicine) {
     ctx.textAlign = 'center';
     days.forEach((day, i) => {
         const x = padding + stepX * i;
-        const label = new Date(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const label = new Date(day).toLocaleDateString('en-US', { day: 'numeric' });
         ctx.fillText(label, x, canvas.height - padding + 20);
     });
 }
