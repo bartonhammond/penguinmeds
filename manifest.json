@@ -2,7 +2,7 @@
   "name": "Penguin Meds",
   "short_name": "Penguin Meds",
   "description": "Medicine Tracker - Track your marijuana and nicotine usage privately",
-  "start_url": "/penquinmeds/",
+  "start_url": "/penguinmeds/",
   "display": "standalone",
   "background_color": "#00CED1",
   "theme_color": "#00CED1",
