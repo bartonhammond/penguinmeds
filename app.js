@@ -201,13 +201,13 @@ function updateUI(medicine) {
         recentDiv.innerHTML = '<div class="no-data">No entries today</div>';
     } else {
         recentDiv.innerHTML = '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #00838F;">Today\'s Entries</h3>' +
-            filtered.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10).map(e => `
+            filtered.sort((a, b) => b.timestamp - a.timestamp).map(e => `
                 <div class="entry-item ${App.editingEntry[medicine] === e.timestamp ? 'editing' : ''}" data-medicine="${medicine}" data-timestamp="${e.timestamp}">
                     <div class="entry-info">
                         <div class="entry-type">${e.type}</div>
                         <div class="entry-time">${e.time}</div>
                     </div>
-                    <div class="entry-amount">${e.amount}mg</div>
+                    <div class="entry-amount">${e.amount} mg</div>
                     <button class="delete-btn" data-medicine="${medicine}" data-timestamp="${e.timestamp}">Delete</button>
                 </div>
             `).join('');
