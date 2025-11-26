@@ -18,6 +18,8 @@ function setCurrentTime() {
 function switchTab(index) {
     const tabs = document.querySelectorAll('.tab');
     const contents = document.querySelectorAll('.tab-content');
+
+    setCurrentTime()
     
     tabs.forEach((tab, i) => {
         tab.classList.toggle('active', i === index);
