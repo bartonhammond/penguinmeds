@@ -10,6 +10,7 @@ const App = {
 function setCurrentTime() {
     const now = new Date();
     const timeStr = now.toTimeString().slice(0, 5);
+    document.getElementById('mj-date').value = getDateStr(now)
     document.getElementById('mj-time').value = timeStr;
     document.getElementById('nic-time').value = timeStr;
 }
@@ -35,7 +36,7 @@ function switchTab(index) {
 
 // Get date string
 function getDateStr(date = new Date()) {
-    return date.toISOString().split('T')[0];
+    return date.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
 }
 
 // Get last 7 days
@@ -48,15 +49,30 @@ function getLast7Days() {
     }
     return days;
 }
+function getDayDifferenceIgnoreTime(date1, date2) {
+  // Normalize both dates to midnight UTC
+  const utcDate1 = new Date(Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()));
+  const utcDate2 = new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()));
+
+  // Calculate the difference in milliseconds
+  const diffInMilliseconds = Math.abs(utcDate2.getTime() - utcDate1.getTime());
+
+  // Convert milliseconds to days (1000ms * 60s * 60m * 24h)
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  
+  // Return the number of full days
+  return Math.floor(diffInMilliseconds / millisecondsPerDay);
+}
 
 // Clean old data
 async function cleanOldData() {
-    const validDays = getLast7Days();
     const keys = Object.keys(localStorage).filter(key => key.startsWith('entries:'));
-    
+    const now = new Date()
     keys.forEach(key => {
-        const date = key.replace('entries:', '');
-        if (!validDays.includes(date)) {
+        const date = new Date(key.replace('entries:', ''))
+	const daysBetween = getDayDifferenceIgnoreTime(now, date);
+
+	if ((daysBetween) > 10) {
             localStorage.removeItem(key);
         }
     });
@@ -83,7 +99,7 @@ function editEntry(medicine, timestamp) {
     App.editingEntry[medicine] = timestamp;
     const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
     
-    const today = getDateStr();
+    const today = document.getElementById('mj-date').value
     const key = `entries:${today}`;
     
     const data = localStorage.getItem(key);
@@ -130,17 +146,17 @@ function deleteEntry(medicine, timestamp, event) {
 // Add or update entry
 function addEntry(medicine) {
     const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
+    const date = document.getElementById(`${prefix}-date`).value
     const type = document.getElementById(`${prefix}-type`).value;
     const amount = parseInt(document.getElementById(`${prefix}-amount`).value);
     const time = document.getElementById(`${prefix}-time`).value;
-    
-    if (!type || !amount || !time) {
+
+    if (!type || !amount || !time || !date) {
         alert('Please fill in all fields');
         return;
     }
-    
-    const today = getDateStr();
-    const key = `entries:${today}`;
+
+    const key = `entries:${date}`;
     
     let entries = [];
     const data = localStorage.getItem(key);
@@ -183,7 +199,7 @@ function addEntry(medicine) {
 
 // Update UI
 function updateUI(medicine) {
-    const today = getDateStr();
+    const today = document.getElementById('mj-date').value
     const key = `entries:${today}`;
     
     let entries = [];
@@ -200,9 +216,9 @@ function updateUI(medicine) {
     
     const recentDiv = document.getElementById(`${prefix}-recent`);
     if (filtered.length === 0) {
-        recentDiv.innerHTML = '<div class="no-data">No entries today</div>';
+        recentDiv.innerHTML = '<div class="no-data">No entries date</div>';
     } else {
-        recentDiv.innerHTML = '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #00838F;">Today\'s Entries</h3>' +
+        recentDiv.innerHTML = '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #00838F;">Entries</h3>' +
             filtered.sort((a, b) => b.timestamp - a.timestamp).map(e => `
                 <div class="entry-item ${App.editingEntry[medicine] === e.timestamp ? 'editing' : ''}" data-medicine="${medicine}" data-timestamp="${e.timestamp}">
                     <div class="entry-info">
@@ -336,6 +352,11 @@ document.addEventListener('click', (e) => {
 });
 
 // Button event listeners
+document.getElementById('mj-date').addEventListener('change', (e) => {
+    updateUI('marijuana')
+});					    
+						   
+    
 document.getElementById('mj-submit-btn').addEventListener('click', () => addEntry('marijuana'));
 document.getElementById('nic-submit-btn').addEventListener('click', () => addEntry('nicotine'));
 document.getElementById('mj-cancel-btn').addEventListener('click', () => cancelEdit('marijuana'));
