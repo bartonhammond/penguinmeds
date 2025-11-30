@@ -162,8 +162,14 @@ function addEntry(prefix) {
     if (App.editingEntry[prefix]) {
         const index = entries.findIndex(e => e.timestamp === App.editingEntry[prefix]);
         if (index !== -1) {
+	    let medicine
+	    if (prefix === 'mj')
+		medicine = 'marijuana'
+	    if (prefix === 'nic')
+		medicine = 'nicotine'
+
             entries[index] = {
-                prefix,
+                medicine,
                 type,
                 amount,
                 time,
@@ -176,8 +182,13 @@ function addEntry(prefix) {
         document.getElementById(`${prefix}-cancel-btn`).style.display = 'none';
         document.getElementById(`${prefix}-edit-indicator`).style.display = 'none';
     } else {
+	let medicine
+	if (prefix === 'mj')
+	    medicine = 'marijuana'
+	if (prefix === 'nic')
+	    medicine = 'nicotine'
         const newEntry = {
-            prefix,
+            medicine,
             type,
             amount,
             time,
