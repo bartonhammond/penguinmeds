@@ -31,8 +31,8 @@ function switchTab(index) {
         content.classList.toggle('active', i === index);
     });
 
-    if (index === 2) drawChart('marijuana');
-    if (index === 3) drawChart('nicotine');
+    if (index === 2) drawChart('mj');
+    if (index === 3) drawChart('nic');
 }
 
 // Get date string
@@ -202,8 +202,14 @@ function updateUI(prefix) {
     if (data) {
         entries = JSON.parse(data);
     }
+
+    let filtered
+    if (prefix === 'mj')    
+	filtered = entries.filter(e => e.medicine === 'marijuana')
+    if (prefix === 'nic')
+	filtered = entries.filter(e => e.medicine === 'nicotine')
     
-    const filtered = entries.filter(e => e.prefix === prefix);
+
     const total = filtered.reduce((sum, e) => sum + e.amount, 0);
     
     document.getElementById(`${prefix}-total`).textContent = total;
@@ -241,16 +247,14 @@ function drawChart(prefix) {
         const key = `entries:${day}`;
         const stored = localStorage.getItem(key);
         let total = 0;
-        
         if (stored) {
             const entries = JSON.parse(stored);
-            const filtered = entries.filter(e => {
-		if (prefix === 'mj')
-		    e.medicine === 'marijuana'
-		if (prefix === 'nic')
-		    e.medicine === 'nicotine'
+	    let filtered
+	    if (prefix === 'mj')    
+		filtered = entries.filter(e => e.medicine === 'marijuana')
+	    if (prefix === 'nic')
+		filtered = entries.filter(e => e.medicine === 'nicotine')
 		
-	    });
             total = filtered.reduce((sum, e) => sum + e.amount, 0);
         }
         data.push(total);
