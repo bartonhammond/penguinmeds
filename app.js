@@ -11,6 +11,7 @@ function setCurrentTime() {
     const now = new Date();
     const timeStr = now.toTimeString().slice(0, 5);
     document.getElementById('mj-date').value = getDateStr(now)
+    document.getElementById('nic-date').value = getDateStr(now)
     document.getElementById('mj-time').value = timeStr;
     document.getElementById('nic-time').value = timeStr;
 }
@@ -79,27 +80,22 @@ async function cleanOldData() {
 }
 
 // Cancel edit mode
-function cancelEdit(medicine) {
-    App.editingEntry[medicine] = null;
-    const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
-    
-    document.getElementById(`${prefix}-type`).value = medicine === 'marijuana' ? 'flower' : 'gum';
-    document.getElementById(`${prefix}-amount`).value = medicine === 'marijuana' ? '5' : '2';
+function cancelEdit(prefix) {
+    App.editingEntry[prefix] = null;
     setCurrentTime();
     
     document.getElementById(`${prefix}-submit-btn`).textContent = 'Add Entry';
     document.getElementById(`${prefix}-cancel-btn`).style.display = 'none';
     document.getElementById(`${prefix}-edit-indicator`).style.display = 'none';
     
-    updateUI(medicine);
+    updateUI(prefix);
 }
 
 // Edit entry
-function editEntry(medicine, timestamp) {
-    App.editingEntry[medicine] = timestamp;
-    const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
+function editEntry(prefix, timestamp) {
+    App.editingEntry[prefix] = timestamp;
     
-    const today = document.getElementById('mj-date').value
+    const today = document.getElementById(`${prefix}-date`).value
     const key = `entries:${today}`;
     
     const data = localStorage.getItem(key);
@@ -118,13 +114,13 @@ function editEntry(medicine, timestamp) {
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            updateUI(medicine);
+            updateUI(prefix);
         }
     }
 }
 
 // Delete entry
-function deleteEntry(medicine, timestamp, event) {
+function deleteEntry(prefix, timestamp, event) {
     event.stopPropagation();
     
     if (!confirm('Delete this entry?')) {
@@ -139,13 +135,12 @@ function deleteEntry(medicine, timestamp, event) {
         let entries = JSON.parse(data);
         entries = entries.filter(e => e.timestamp !== timestamp);
         localStorage.setItem(key, JSON.stringify(entries));
-        updateUI(medicine);
+        updateUI(prefix);
     }
 }
 
 // Add or update entry
-function addEntry(medicine) {
-    const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
+function addEntry(prefix) {
     const date = document.getElementById(`${prefix}-date`).value
     const type = document.getElementById(`${prefix}-type`).value;
     const amount = parseInt(document.getElementById(`${prefix}-amount`).value);
@@ -164,25 +159,25 @@ function addEntry(medicine) {
         entries = JSON.parse(data);
     }
     
-    if (App.editingEntry[medicine]) {
-        const index = entries.findIndex(e => e.timestamp === App.editingEntry[medicine]);
+    if (App.editingEntry[prefix]) {
+        const index = entries.findIndex(e => e.timestamp === App.editingEntry[prefix]);
         if (index !== -1) {
             entries[index] = {
-                medicine,
+                prefix,
                 type,
                 amount,
                 time,
-                timestamp: App.editingEntry[medicine]
+                timestamp: App.editingEntry[prefix]
             };
         }
-        App.editingEntry[medicine] = null;
+        App.editingEntry[prefix] = null;
         
         document.getElementById(`${prefix}-submit-btn`).textContent = 'Add Entry';
         document.getElementById(`${prefix}-cancel-btn`).style.display = 'none';
         document.getElementById(`${prefix}-edit-indicator`).style.display = 'none';
     } else {
         const newEntry = {
-            medicine,
+            prefix,
             type,
             amount,
             time,
@@ -192,14 +187,14 @@ function addEntry(medicine) {
     }
     
     localStorage.setItem(key, JSON.stringify(entries));
-    updateUI(medicine);
+    updateUI(prefix);
     setCurrentTime();
     cleanOldData();
 }
 
 // Update UI
-function updateUI(medicine) {
-    const today = document.getElementById('mj-date').value
+function updateUI(prefix) {
+    const today = document.getElementById(`${prefix}-date`).value
     const key = `entries:${today}`;
     
     let entries = [];
@@ -208,10 +203,9 @@ function updateUI(medicine) {
         entries = JSON.parse(data);
     }
     
-    const filtered = entries.filter(e => e.medicine === medicine);
+    const filtered = entries.filter(e => e.prefix === prefix);
     const total = filtered.reduce((sum, e) => sum + e.amount, 0);
     
-    const prefix = medicine === 'marijuana' ? 'mj' : 'nic';
     document.getElementById(`${prefix}-total`).textContent = total;
     
     const recentDiv = document.getElementById(`${prefix}-recent`);
@@ -220,21 +214,21 @@ function updateUI(medicine) {
     } else {
         recentDiv.innerHTML = '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #00838F;">Entries</h3>' +
             filtered.sort((a, b) => b.timestamp - a.timestamp).map(e => `
-                <div class="entry-item ${App.editingEntry[medicine] === e.timestamp ? 'editing' : ''}" data-medicine="${medicine}" data-timestamp="${e.timestamp}">
+                <div class="entry-item ${App.editingEntry[prefix] === e.timestamp ? 'editing' : ''}" data-medicine="${prefix}" data-timestamp="${e.timestamp}">
                     <div class="entry-info">
                         <div class="entry-type">${e.type}</div>
                         <div class="entry-time">${e.time}</div>
                     </div>
                     <div class="entry-amount">${e.amount} mg</div>
-                    <button class="delete-btn" data-medicine="${medicine}" data-timestamp="${e.timestamp}">Delete</button>
+                    <button class="delete-btn" data-medicine="${prefix}" data-timestamp="${e.timestamp}">Delete</button>
                 </div>
             `).join('');
     }
 }
 
 // Draw chart
-function drawChart(medicine) {
-    const canvas = document.getElementById(`${medicine === 'marijuana' ? 'mj' : 'nic'}-chart`);
+function drawChart(prefix) {
+    const canvas = document.getElementById(`${prefix}-chart`);
     const ctx = canvas.getContext('2d');
     
     canvas.width = canvas.offsetWidth;
@@ -250,7 +244,13 @@ function drawChart(medicine) {
         
         if (stored) {
             const entries = JSON.parse(stored);
-            const filtered = entries.filter(e => e.medicine === medicine);
+            const filtered = entries.filter(e => {
+		if (prefix === 'mj')
+		    e.medicine === 'marijuana'
+		if (prefix === 'nic')
+		    e.medicine === 'nicotine'
+		
+	    });
             total = filtered.reduce((sum, e) => sum + e.amount, 0);
         }
         data.push(total);
@@ -353,19 +353,22 @@ document.addEventListener('click', (e) => {
 
 // Button event listeners
 document.getElementById('mj-date').addEventListener('change', (e) => {
-    updateUI('marijuana')
+    updateUI('mj')
+});					    
+document.getElementById('nic-date').addEventListener('change', (e) => {
+    updateUI('nic')
 });					    
 						   
     
-document.getElementById('mj-submit-btn').addEventListener('click', () => addEntry('marijuana'));
-document.getElementById('nic-submit-btn').addEventListener('click', () => addEntry('nicotine'));
-document.getElementById('mj-cancel-btn').addEventListener('click', () => cancelEdit('marijuana'));
-document.getElementById('nic-cancel-btn').addEventListener('click', () => cancelEdit('nicotine'));
+document.getElementById('mj-submit-btn').addEventListener('click', () => addEntry('mj'));
+document.getElementById('nic-submit-btn').addEventListener('click', () => addEntry('nic'));
+document.getElementById('mj-cancel-btn').addEventListener('click', () => cancelEdit('mj'));
+document.getElementById('nic-cancel-btn').addEventListener('click', () => cancelEdit('nic'));
 
 // Initialize
 setTimeout(() => {
     setCurrentTime();
-    updateUI('marijuana');
-    updateUI('nicotine');
+    updateUI('mj');
+    updateUI('nic');
     cleanOldData();
 }, 100);

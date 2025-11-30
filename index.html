@@ -92,6 +92,11 @@
 
       <!-- Nicotine Entry Tab -->
       <div class="tab-content">
+	<div class="form-group">
+          <label>Day</label>
+          <input type="date" id="nic-date" required>
+        </div>
+
         <div class="daily-total">
           <h3>Total</h3>
           <div class="amount" id="nic-total">0</div>
@@ -129,7 +134,7 @@
 
         <div class="form-group">
           <label>Time</label>
-          <input type="datetime-local" id="nic-time" required>
+          <input type="time" id="nic-time" required>
         </div>
 
         <button type="button" class="btn" id="nic-submit-btn">Add Entry</button>
